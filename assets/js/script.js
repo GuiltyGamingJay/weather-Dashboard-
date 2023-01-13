@@ -24,7 +24,6 @@ let getWeather = function(city) {
         alert("Unable to connect to OpenWeatherMap API");
     })
 };
-
 // cityName will be the value typed in by the user in the 'Search for a City' form
 let submitHandler = function(event) {
     event.preventDefault();
@@ -38,6 +37,9 @@ let submitHandler = function(event) {
     }
 };
 
+
+// need to fix API link. Other console logs work properly.
+// FIXED. manually type in API key in link instead of concatenating with a variable to avoid formatting issues
 
 // Uses JQuery to grab HTML ID's and then append the weatherData retrieved from the API into the HTML
 let displayWeather = function(weatherData) {
@@ -55,7 +57,7 @@ let displayWeather = function(weatherData) {
             })
         });
 
-        fetch("https://api.openweathermap.org/data/2.5/forecast?q=" + weatherData.name + "&appid=5e7c5fd0e653a35e32f8b138e0447fbe&units=imperial")
+    fetch("https://api.openweathermap.org/data/2.5/forecast?q=" + weatherData.name + "&appid=5e7c5fd0e653a35e32f8b138e0447fbe&units=imperial")
         .then(function(response) {
             response.json().then(function(data) {
                 // clears previous entires in five-day forecast
@@ -77,6 +79,52 @@ let displayWeather = function(weatherData) {
                 }
             })
     });
+
     lastCity = weatherData.name;
     saveSearchHistory(weatherData.name);
 };
+
+// Passes through the last city value searched as weatherData.name in displayWeather function
+let saveSearchHistory = function (city) {
+    // creates empty array and string if local storage is empty
+    if (!history.includes(city)) {
+        history.push(city);
+
+        $('#search-history').append("<a href='#' class='list-group-item list-group-item-action' id='" + city + "'>" + city + "</a>");
+    }
+    localStorage.setItem('weatherSearchHistory', JSON.stringify(history));
+    localStorage.setItem('lastCity', JSON.stringify(lastCity));
+    loadSearchHistory();
+};
+
+
+let loadSearchHistory = function() {
+    history = JSON.parse(localStorage.getItem('weatherSearchHistory'));
+    lastCity = JSON.parse(localStorage.getItem('lastCity'));
+    // creates empty array and string if nothing is in local storage
+    if (!history) {
+        history = []
+    } if (!lastCity) {
+        lastCity = ""
+    }
+
+    $('#search-history').empty();
+
+    for (i=0; i < history.length; i++) {
+        $("#search-history").append("<a href='#' class='list-group-item list-group-item-action' id='" + history[i] + "'>" + history[i] + "</a>");
+    }
+};
+
+loadSearchHistory();
+
+if (lastCity != "") {
+    getWeather(lastCity);
+}
+
+$('#search-form').submit(submitHandler);
+
+// Allows user to click on a previously searched city to pull up its weather again
+$('#search-history').on('click', function(event) {
+    let previousCity = $(event.target).closest("a").attr("id");
+    getWeather(previousCity);
+});
