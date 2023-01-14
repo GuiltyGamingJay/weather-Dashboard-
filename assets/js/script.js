@@ -24,7 +24,7 @@ let getWeather = function(city) {
         alert("Unable to connect to OpenWeatherMap API");
     })
 };
-// cityName will be the value typed in by the user in the 'Search for a City' form
+
 let submitHandler = function(event) {
     event.preventDefault();
     let cityName = $('#cityname').val();
@@ -38,10 +38,7 @@ let submitHandler = function(event) {
 };
 
 
-// need to fix API link. Other console logs work properly.
-// FIXED. manually type in API key in link instead of concatenating with a variable to avoid formatting issues
 
-// Uses JQuery to grab HTML ID's and then append the weatherData retrieved from the API into the HTML
 let displayWeather = function(weatherData) {
 
     $("#main-city-name").text(weatherData.name + " (" + dayjs(weatherData.dt * 1000).format("MM/DD/YYYY") + ") ").append(`<img src="https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png"></img>`);
@@ -60,9 +57,9 @@ let displayWeather = function(weatherData) {
     fetch("https://api.openweathermap.org/data/2.5/forecast?q=" + weatherData.name + "&appid=5e7c5fd0e653a35e32f8b138e0447fbe&units=imperial")
         .then(function(response) {
             response.json().then(function(data) {
-                // clears previous entires in five-day forecast
+              
                 $('#five-day').empty();
-                // every 8th value is a new day
+           
                 for (i = 7; i <= data.list.length; i += 8) {
                     let fDayCard =`
                     <div class="col-md-2 m-2 py-3 card text-white bg-primary">
@@ -84,9 +81,9 @@ let displayWeather = function(weatherData) {
     saveSearchHistory(weatherData.name);
 };
 
-// Passes through the last city value searched as weatherData.name in displayWeather function
+
 let saveSearchHistory = function (city) {
-    // creates empty array and string if local storage is empty
+    
     if (!history.includes(city)) {
         history.push(city);
 
@@ -101,7 +98,7 @@ let saveSearchHistory = function (city) {
 let loadSearchHistory = function() {
     history = JSON.parse(localStorage.getItem('weatherSearchHistory'));
     lastCity = JSON.parse(localStorage.getItem('lastCity'));
-    // creates empty array and string if nothing is in local storage
+    
     if (!history) {
         history = []
     } if (!lastCity) {
@@ -123,7 +120,7 @@ if (lastCity != "") {
 
 $('#search-form').submit(submitHandler);
 
-// Allows user to click on a previously searched city to pull up its weather again
+
 $('#search-history').on('click', function(event) {
     let previousCity = $(event.target).closest("a").attr("id");
     getWeather(previousCity);

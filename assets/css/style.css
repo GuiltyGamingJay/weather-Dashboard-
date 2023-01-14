@@ -1,4 +1,16 @@
 body{
-    background-color: #415A77;
+    background-color: #242423;
     
+}
+
+.topbar{
+    text-align:center;
+    color: black;
+    background-color: #F5CB5C;
+
+}
+
+.midbar{
+    background-color: #CFDBD5 ;
+    color: black;
 }
